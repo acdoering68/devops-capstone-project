@@ -86,14 +86,19 @@ class TestAccountService(TestCase):
         data = resp.get_json()
         self.assertEqual(data["status"], "OK")
 
-    def test_create_account(self):
-        """It should Create a new Account"""
+    def help_create_account(self):
         account = AccountFactory()
         response = self.client.post(
             BASE_URL,
             json=account.serialize(),
             content_type="application/json"
         )
+        return (account,response)
+
+
+    def test_create_account(self):
+        """It should Create a new Account"""
+        account,response = self.help_create_account()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Make sure location header is set
@@ -122,5 +127,19 @@ class TestAccountService(TestCase):
             content_type="test/html"
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+    def test_list_accounts(self):
+        """ Return a list of accounts """
+        # first insert one account, so we know at least one list element
+        account,response = self.help_create_account()
+        response = self.client.get(
+            BASE_URL)
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        account_list_dict=response.text
+        listoutputf = open("listoutput.txt","w")
+        print(type(account_list_dict),file=listoutputf)
+        print(account_list_dict,file=listoutputf)
+        listoutputf.close()
+
 
     # ADD YOUR TEST CASES HERE ...
