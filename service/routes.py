@@ -77,7 +77,19 @@ def list_accounts():
 # READ AN ACCOUNT
 ######################################################################
 
-# ... place you code here to READ an account ...
+@app.route("/accounts/<id>", methods=["GET"])
+def read_account(id):
+    """
+    Find an account by its id
+    """
+    app.logger.info("Request to read account " + str(id))
+    findres = Account.find(id)
+    if not findres: #  can this return an empty list? or isInstance len(findres) == 0
+        app.logger.info("Account was not found in DB: " + str(id))
+        return make_response(jsonify({}),status.HTTP_404_NOT_FOUND)
+    else:         
+        return make_response(findres.serialize(),
+                         status.HTTP_200_OK)
 
 
 ######################################################################

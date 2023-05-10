@@ -87,7 +87,7 @@ class TestAccountService(TestCase):
         self.assertEqual(data["status"], "OK")
 
     def help_create_account(self):
-        account = AccountFactory()
+        account = self._create_accounts( 1)[0]
         response = self.client.post(
             BASE_URL,
             json=account.serialize(),
@@ -141,5 +141,15 @@ class TestAccountService(TestCase):
         print(account_list_dict,file=listoutputf)
         listoutputf.close()
 
-
-    # ADD YOUR TEST CASES HERE ...
+    def test_get_account(self):
+        """Retrieve one particular account"""
+        # first insert one account, so we know at least one list element
+        account,response = self.help_create_account()
+        response = self.client.get(
+            BASE_URL+"/"+str(account.id))
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        resaccount = response.get_json()
+        self.assertEqual(account.name,resaccount["name"])
+        self.assertEqual(account.address,resaccount["address"])
+        self.assertEqual(account.email,resaccount["email"])
+        self.assertEqual(account.phone_number,resaccount["phone_number"])
