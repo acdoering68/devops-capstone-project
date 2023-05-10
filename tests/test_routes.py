@@ -86,14 +86,19 @@ class TestAccountService(TestCase):
         data = resp.get_json()
         self.assertEqual(data["status"], "OK")
 
-    def test_create_account(self):
-        """It should Create a new Account"""
-        account = AccountFactory()
+    def help_create_account(self):
+        account = self._create_accounts( 1)[0]
         response = self.client.post(
             BASE_URL,
             json=account.serialize(),
             content_type="application/json"
         )
+        return (account,response)
+
+
+    def test_create_account(self):
+        """It should Create a new Account"""
+        account,response = self.help_create_account()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Make sure location header is set
@@ -123,4 +128,60 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    # ADD YOUR TEST CASES HERE ...
+    def test_list_accounts(self):
+        """ Return a list of accounts """
+        # first insert one account, so we know at least one list element
+        account,response = self.help_create_account()
+        response = self.client.get(
+            BASE_URL)
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        account_list_dict=response.text
+        listoutputf = open("listoutput.txt","w")
+        print(type(account_list_dict),file=listoutputf)
+        print(account_list_dict,file=listoutputf)
+        listoutputf.close()
+
+    def _check_account(self,refaccount,response):
+        resaccount = response.get_json()
+        self.assertEqual(refaccount.name,resaccount["name"])
+        self.assertEqual(refaccount.address,resaccount["address"])
+        self.assertEqual(refaccount.email,resaccount["email"])
+        self.assertEqual(refaccount.phone_number,resaccount["phone_number"])
+
+    def test_get_account(self):
+        """Retrieve one particular account"""
+        # first insert one account, so we know at least one list element
+        account,response = self.help_create_account()
+        response = self.client.get(
+            BASE_URL+"/"+str(account.id))
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        self._check_account(account,response)
+        
+
+    def test_update_account(self):
+        """ Update an account """
+        account,response = self.help_create_account()
+        account2 = self._create_accounts( 1)[0]
+        account.phone_number = account2.phone_number
+        response = self.client.put(
+            BASE_URL+"/"+str(account.id),
+            json=account.serialize(),
+            content_type="application/json"
+            )
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        # new read the updated account to check that it got updated
+        response = self.client.get(
+            BASE_URL+"/"+str(account.id))
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        self._check_account(account,response)
+
+    def test_delete_account(self):
+        """ Delete an account """
+        account,response = self.help_create_account()
+        response = self.client.delete(
+            BASE_URL+"/"+str(account.id)
+            )
+        self.assertEqual(response.status_code,status.HTTP_204_NO_CONTENT)
+        response = self.client.get(
+            BASE_URL+"/"+str(account.id))
+        self.assertEqual(response.status_code,status.HTTP_404_NOT_FOUND)
