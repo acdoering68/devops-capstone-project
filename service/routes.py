@@ -72,7 +72,7 @@ def list_accounts():
     all_accounts = Account.all()
     return make_response(jsonify([a.serialize() for a in all_accounts]),
                          status.HTTP_200_OK)
-      
+
 
 ######################################################################
 # READ AN ACCOUNT
@@ -120,7 +120,8 @@ def update_account(id):
 ######################################################################
 # DELETE AN ACCOUNT
 ######################################################################
-    
+
+
 @app.route("/accounts/<id>", methods=["DELETE"])
 def delete_account(id):
     """
@@ -129,8 +130,7 @@ def delete_account(id):
     app.logger.info("Deleting account " + str(id))
     account = Account.find(id)
     account.delete()
-    return make_response("", status.HTTP_204_NO_CONTENT, {"Location": "/" })
-
+    return make_response("", status.HTTP_204_NO_CONTENT, {"Location": "/"})
 
 
 ######################################################################
