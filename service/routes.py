@@ -61,6 +61,7 @@ def create_accounts():
 # LIST ALL ACCOUNTS
 ######################################################################
 
+
 @app.route("/accounts", methods=["GET"])
 def list_accounts():
     """
@@ -71,7 +72,7 @@ def list_accounts():
     all_accounts = Account.all()
     return make_response(jsonify([a.serialize() for a in all_accounts]),
                          status.HTTP_200_OK)
-        
+      
 
 ######################################################################
 # READ AN ACCOUNT
@@ -84,12 +85,12 @@ def read_account(id):
     """
     app.logger.info("Request to read account " + str(id))
     findres = Account.find(id)
-    if not findres: #  can this return an empty list? or isInstance len(findres) == 0
+    if not findres:  # can this return an empty list? or isInstance len(findres) == 0
         app.logger.info("Account was not found in DB: " + str(id))
-        return make_response(jsonify({}),status.HTTP_404_NOT_FOUND)
-    else:         
+        return make_response(jsonify({}), status.HTTP_404_NOT_FOUND)
+    else:
         return make_response(findres.serialize(),
-                         status.HTTP_200_OK)
+                             status.HTTP_200_OK)
 
 
 ######################################################################
