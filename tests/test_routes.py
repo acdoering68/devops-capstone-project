@@ -175,3 +175,13 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code,status.HTTP_200_OK)
         self._check_account(account,response)
 
+    def test_delete_account(self):
+        """ Delete an account """
+        account,response = self.help_create_account()
+        response = self.client.delete(
+            BASE_URL+"/"+str(account.id)
+            )
+        self.assertEqual(response.status_code,status.HTTP_204_NO_CONTENT)
+        response = self.client.get(
+            BASE_URL+"/"+str(account.id))
+        self.assertEqual(response.status_code,status.HTTP_404_NOT_FOUND)
