@@ -141,6 +141,13 @@ class TestAccountService(TestCase):
         print(account_list_dict,file=listoutputf)
         listoutputf.close()
 
+    def _check_account(self,refaccount,response):
+        resaccount = response.get_json()
+        self.assertEqual(refaccount.name,resaccount["name"])
+        self.assertEqual(refaccount.address,resaccount["address"])
+        self.assertEqual(refaccount.email,resaccount["email"])
+        self.assertEqual(refaccount.phone_number,resaccount["phone_number"])
+
     def test_get_account(self):
         """Retrieve one particular account"""
         # first insert one account, so we know at least one list element
@@ -148,8 +155,23 @@ class TestAccountService(TestCase):
         response = self.client.get(
             BASE_URL+"/"+str(account.id))
         self.assertEqual(response.status_code,status.HTTP_200_OK)
-        resaccount = response.get_json()
-        self.assertEqual(account.name,resaccount["name"])
-        self.assertEqual(account.address,resaccount["address"])
-        self.assertEqual(account.email,resaccount["email"])
-        self.assertEqual(account.phone_number,resaccount["phone_number"])
+        self._check_account(account,response)
+        
+
+    def test_update_account(self):
+        """ Update an account """
+        account,response = self.help_create_account()
+        account2 = self._create_accounts( 1)[0]
+        account.phone_number = account2.phone_number
+        response = self.client.put(
+            BASE_URL+"/"+str(account.id),
+            json=account.serialize(),
+            content_type="application/json"
+            )
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        # new read the updated account to check that it got updated
+        response = self.client.get(
+            BASE_URL+"/"+str(account.id))
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        self._check_account(account,response)
+
