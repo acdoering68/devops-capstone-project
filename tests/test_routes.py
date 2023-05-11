@@ -99,7 +99,6 @@ class TestAccountService(TestCase):
         )
         return (account, response)
 
-
     def test_create_account(self):
         """It should Create a new Account"""
         account, response = self.help_create_account()
@@ -139,8 +138,8 @@ class TestAccountService(TestCase):
         response = self.client.get(
             BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        account_list_dict=response.text
-        listoutputf = open("listoutput.txt","w")
+        account_list_dict = response.text
+        listoutputf = open("listoutput.txt", "w")
         print(type(account_list_dict), file=listoutputf)
         print(account_list_dict, file=listoutputf)
         listoutputf.close()
@@ -155,17 +154,17 @@ class TestAccountService(TestCase):
     def test_get_account(self):
         """Retrieve one particular account"""
         # first insert one account, so we know at least one list element
-        account,response = self.help_create_account()
+        account, response = self.help_create_account()
         response = self.client.get(
             BASE_URL+"/"+str(account.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self._check_account(account, response)
-        
+
 
     def test_update_account(self):
         """ Update an account """
         account, response = self.help_create_account()
-        account2 = self._create_accounts( 1)[0]
+        account2 = self._create_accounts(1)[0]
         account.phone_number = account2.phone_number
         response = self.client.put(
             BASE_URL+"/"+str(account.id),
