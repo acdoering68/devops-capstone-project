@@ -189,10 +189,6 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-#######################################
-#   Environ overwrite security flaw
-#######################################
-
     def test_environment_overwrite(self):
         """It should get the unsafe header"""
         response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
