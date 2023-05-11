@@ -188,7 +188,6 @@ class TestAccountService(TestCase):
             BASE_URL+"/"+str(account.id))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_environment_overwrite(self):
         """It should get the unsafe header"""
         response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
