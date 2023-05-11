@@ -160,7 +160,6 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self._check_account(account, response)
 
-
     def test_update_account(self):
         """ Update an account """
         account, response = self.help_create_account()
@@ -193,7 +192,6 @@ class TestAccountService(TestCase):
 #######################################
 #   Environ overwrite security flaw
 #######################################
-
 
     def test_environment_overwrite(self):
         """It should get the unsafe header"""
