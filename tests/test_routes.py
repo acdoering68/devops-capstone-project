@@ -193,6 +193,7 @@ class TestAccountService(TestCase):
 #   Environ overwrite security flaw
 #######################################
 
+
     def test_environment_overwrite(self):
         """It should get the unsafe header"""
         response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
